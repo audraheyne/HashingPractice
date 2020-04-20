@@ -6,6 +6,30 @@ let collisionLinearProbing = (key, prev_index, array_size) => {
 	return (prev_index + 1) % array_size;
 }
 
+let multiplicative = (key, array_size) => {
+	return (key * 7) % array_size;
+}
+
+let squared = (key, array_size) => {
+	return key * key % array_size;
+}
+
+let charCodes = (key, array_size) => {
+	return new String(key).toString().split("").reduce((a, b) => a + b.charCodeAt(0), 0) % array_size;
+}
+
+let patrick = (key, array_size) => {
+	return "Patrick Murphy".split("").reduce((a, b) => a + b.charCodeAt(0), 0) * key % array_size;
+}
+
+let folding = (key, array_size) => {
+	const folds = getFolds(key, 1);
+	var sum = folds.reduce(function(a, b){
+		return a + b;
+		}, 0);
+	return sum % array_size;
+}
+
 let getFolds = (number, fold_length) => {
 	mod = Math.pow(10, fold_length);
 	folds = [];
@@ -76,7 +100,7 @@ let runExperiment = (hashing_function, hashing_desc, collision_function, collisi
 
 	// insert some elements
 	for (index in data) {
-		if (index < 16) {
+		//if (index < 5) {
 			key = data[index]['id'];
 			value = data[index];
 
@@ -85,7 +109,7 @@ let runExperiment = (hashing_function, hashing_desc, collision_function, collisi
 
 			// perform the insert
 			hash_table.insert(key, value);
-		}
+		//}
 	}
 
 	let results = {};
@@ -111,6 +135,11 @@ $(document).ready(function () {
 	results.push(runExperiment(hashSimpleModulus, "simple modulus", collisionLinearProbing, "linear probing", .5));
 	results.push(runExperiment(hashSimpleModulus, "simple modulus", collisionLinearProbing, "linear probing", .3));
 	results.push(runExperiment(hashSimpleModulus, "simple modulus", collisionLinearProbing, "linear probing", .1));
+	results.push(runExperiment(multiplicative, "multiplicative", collisionLinearProbing, "linear probing", .5));
+	results.push(runExperiment(folding, "folding", collisionLinearProbing, "linear probing", .5));
+	results.push(runExperiment(squared, "squared", collisionLinearProbing, "linear probing", .5));
+	results.push(runExperiment(charCodes, "char codes", collisionLinearProbing, "linear probing", .5));
+	results.push(runExperiment(patrick, "patrick", collisionLinearProbing, "linear probing", .5));
 
 	updateTable(results);
 });
